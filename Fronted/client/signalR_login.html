@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <script src="../node_modules/@microsoft/signalr/dist/browser/signalr.js"></script>
+   <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+   <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+   <script>
+      $(document).ready(() => {
+ 
+         const login = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:5000/login")
+            .build();
+ 
+         login.start();
+ 
+         $("#btnLogin").click(() => login.invoke("UserLogin", $("#txtUsername").val(), $("#txtPassword").val()));
+ 
+         login.on("Login", token => {
+            if (token) {
+               localStorage.setItem("accessToken", token.accessToken);
+               localStorage.setItem("refreshToken", token.refreshToken);
+               alert("Login successful.");
+            } else
+               alert("Please check your username and password.");
+         });
+      });
+   </script>
+</head>
+<body>
+   <ul class="nav">
+      <li class="nav-item">
+         <a class="nav-link active" href="create.html">Create User</a>
+      </li>
+      <li class="nav-item">
+         <a class="nav-link" href="login.html">Login</a>
+      </li>
+      <li class="nav-item">
+         <a class="nav-link" href="chatroom.html">Chat Room</a>
+      </li>
+   </ul>
+   <div class="row">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
+         <h2>Login</h2>
+         <div class="form-group">
+            <label>User Name</label>
+            <input type="text" class="form-control" id="txtUsername">
+         </div>
+         <div class="form-group">
+            <label>Password</label>
+            <input type="password" class="form-control" id="txtPassword">
+         </div>
+         <button type="submit" class="btn btn-primary" id="btnLogin">Login</button>
+      </div>
+      <div class="col-md-3"></div>
+   </div>
+</body>
+</html>

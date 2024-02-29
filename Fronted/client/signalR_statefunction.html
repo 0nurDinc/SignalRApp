@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../node_modules/@microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function(){
+
+            var connection = new signalR.HubConnectionBuilder()
+                                 .configureLogging(signalR.LogLevel.Information)
+                                 .withUrl("http://localhost:5000/myhub")
+                                 .withAutomaticReconnect([1500,1500,1500,1500,1500])
+                                 .build();
+
+
+            function connectionStart(){
+                try{
+                    connection.start();
+                }
+                catch(err){
+                    setTimeout(function(){
+                        connectionStart();
+                    },1500);
+                }
+            }
+
+            connectionStart();
+
+            connection.onreconnecting(err =>{
+                console.assert(connection.state === signalR.HubConnectionState.ReConnecting );
+                console.log("The connection is being made.");
+                    $("#connection-state").css("background-color","whitesmoke");
+                    $("#connection-state").css("color","black");
+                    $("#connection-state").html("Connecting");
+            });
+
+            connection.onreconnected(connect =>{
+                console.assert(connection.state === signalR.HubConnectionState.Connected);
+                console.log("The connection has been made.");
+                    $("#connection-state").css("background-color", "#32a838");
+                    $("#connection-state").css("color", "#white");
+                    $("#connection-state").html("Connected");
+            });
+
+            connection.onclose(connect =>{
+                console.assert(connection.state === signalR.HubConnectionState.Disconnected);
+                console.log("The connection could not be made.");
+                    $("#connection-state").css("background-color", "red");
+                    $("#connection-state").css("color", "#white");
+                    $("#connection-state").html("Disconnected");
+                    $("#connection-state").css({
+                        "animation-name":"none",
+                        "animation-duration":"0s",
+                        "animation-timing-function":"initial",
+                        "animation-iteration-count":"initial"
+                    });
+
+            });
+
+        });
+
+    </script>
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #connection-state{
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 20px solid gainsboro;
+            font-size: 40px;
+            display: inherit;    
+            align-items: inherit;
+            justify-content: inherit;
+            color: gray;
+            animation-name: animation-state;
+            animation-duration: 1s;
+            animation-timing-function: cubic-bezier(0.165, 0.84, 0.44, 1);
+            animation-iteration-count: infinite;
+ 
+        }
+
+        @keyframes animation-state {
+            from{
+                border-width: 20px;
+            }
+            to{
+                border-width: 40px;
+            }
+        
+        }
+        
+    </style>
+    <title>Document</title>
+</head>
+<body>
+
+    <div id="connection-state">signalR</div>
+    
+</body>
+</html>

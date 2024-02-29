@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../node_modules/@microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function(){
+
+            var connection = new signalR.HubConnectionBuilder()
+                                .configureLogging(signalR.LogLevel.Information)
+                                .withUrl("http://localhost:5000/myhub")
+                                .withAutomaticReconnect([1000,1000,2000,3000])
+                                .build();
+
+            
+            // connection.start();
+
+            async function start(){
+                try{
+                    connection.start();
+                }
+                catch(err){
+                    setTimeout(() => {
+                        start();
+                    }, 1000);
+                }
+            }
+
+            start();
+
+        });
+
+
+
+
+
+
+        
+
+    </script>
+</head>
+<body>
+    
+</body>
+</html>

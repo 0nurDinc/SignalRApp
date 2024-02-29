@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../node_modules/@microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function(){
+
+            var connection = new signalR.HubConnectionBuilder()
+                                .configureLogging(signalR.LogLevel.Trace)
+                                .withUrl("http://localhost:500f0/myloghub")
+                                .build();
+
+             connection.start()
+                .then(ok => console.info("Success"))
+                .catch(err => console.error("Failed SignalR: "+err.message));
+                
+                
+            $("button").click(function(){
+                var message = $("#sendMessage").val();
+                connection.invoke("SendMessage",message)
+                    .catch(err => console.debug(err));
+            });
+
+            connection.on("logsendmessage",message=>{
+                $("#messageList").append(`<li>${message}</li>`);
+            });
+
+        });
+
+        
+    </script>
+</head>
+<body>
+     
+    <input type="text" name="sendMessage" id="sendMessage">
+    <button type="button">Send</button>
+    <ul id="messageList"></ul>
+
+</body>
+</html>

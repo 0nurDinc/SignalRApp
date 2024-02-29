@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../node_modules/@microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function(){
+
+            var connection =new signalR.HubConnectionBuilder()
+                                .withUrl("http://localhost:5000/myconnectionevent")
+                                .build();
+
+            connection.start();
+
+            $("button").click(()=>{
+                let messageText = $("#textMessage").val();
+                connection.invoke("SendMessageAsync",messageText)
+                    .catch(err => console.log("Error"));
+            });
+
+            connection.on("receiveMessage",message=>{
+                $("#messageList").append(`<li>${message}</li>`);
+            });
+
+            connection.on("userJoined",connectionId=>{
+                $(".alert-text").html(`${connectionId} attended`);
+                setTimeout(()=>{
+                    $("div").show(2000,()=>{
+                        $("div").hide(2000);
+                    });
+                });
+            });
+
+            connection.on("userLeaved",connectionId=>{
+                $("div").html(`${connectionId} left`);
+                $("div").show(2000,()=>{
+                    setTimeout(()=>{
+                        $("div").hide(2000);
+                    });
+                });
+            });
+
+
+            connection.on("clients",clients =>{
+                let lis = "";
+                for(const client in clients){
+                    lis += `<li>${clients[client]} </li>`;
+                }
+                $("#clients").html(lis);
+            });
+
+        });
+
+
+
+    </script>
+</head>
+<body>
+    
+    <input type="text" name="textMessage" id="textMessage">
+    <button>Send</button>
+    <ul id="messageList"></ul>
+    <div class="alert-text"></div>
+
+    <ul id="clients"></ul>
+
+</body>
+</html>

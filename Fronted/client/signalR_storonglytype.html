@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../node_modules/@microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+
+        $(document).ready(function(){
+
+            var connection = new signalR.HubConnectionBuilder()
+                                .withUrl("http://localhost:5000/hubtypes")
+                                .build();
+
+            connection.start();
+
+            $("button").click(function(){
+                let message = $("#messageText").val();
+                connection.invoke("SendMessage",message)
+                    .catch(err => console.error("error"));
+            });
+
+
+            connection.on("receiveMessage",message=>{
+                $("#messageList").append(`${message}<br>`);
+            });
+
+
+        });
+
+    </script>
+    <title>Document</title>
+</head>
+<body>
+     
+    <input type="text" name="messageText" id="messageText">
+    <button type="button">Send</button>
+    <ul id="messageList"></ul>
+ 
+</body>
+</html>

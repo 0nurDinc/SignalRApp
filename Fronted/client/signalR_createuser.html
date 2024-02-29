@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="../node_modules/@microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+ 
+    <script>
+        $(document).ready(() => {
+ 
+            let login = new signalR.HubConnectionBuilder()
+                .withUrl("http://localhost:5000/login")
+                .build();
+ 
+            login.start();
+ 
+            $("#btnCreateUser").click(() => 
+            login.invoke("CreateUser", $("#txtUsername").val(), $("#txtPassword").val()));
+ 
+            login.on("Create", result => {
+                if (result)
+                    alert("Registration has been completed successfully.")
+                else
+                    alert("An unexpected error was encountered while recording.")
+            });
+        });
+    </script>
+</head>
+<body>
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link active" href="create.html">Create User</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="login.html">Login</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="chatroom.html">Chat Room</a>
+        </li>
+    </ul>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <h2>Create User</h2>
+            <div class="form-group">
+                <label>User Name</label>
+                <input type="text" class="form-control" id="txtUsername">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" id="txtPassword">
+            </div>
+            <button type="submit" class="btn btn-primary" id="btnCreateUser">Create User</button>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</body>
+</html>
