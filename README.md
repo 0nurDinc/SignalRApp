@@ -15,5 +15,4 @@ Using remote procedure call (rpc).<br>
  <br>
 https://learn.microsoft.com/tr-tr/aspnet/signalr/
 
-## Example 
- [![Project Video](./video.mp4)](./video.mp4)
+ 
