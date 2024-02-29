@@ -14,7 +14,7 @@
  
          login.start();
  
-         $("#btnLogin").click(() => login.invoke("UserLogin", $("#txtUsername").val(), $("#txtPassword").val()));
+         $("#btnLogin").click(() => login.invoke("UserLogin", $("#textboxUserName").val(), $("#textboxPassword").val()));
  
          login.on("Login", token => {
             if (token) {
@@ -45,11 +45,11 @@
          <h2>Login</h2>
          <div class="form-group">
             <label>User Name</label>
-            <input type="text" class="form-control" id="txtUsername">
+            <input type="text" class="form-control" id="textboxUserName">
          </div>
          <div class="form-group">
             <label>Password</label>
-            <input type="password" class="form-control" id="txtPassword">
+            <input type="password" class="form-control" id="textboxPassword">
          </div>
          <button type="submit" class="btn btn-primary" id="btnLogin">Login</button>
       </div>
